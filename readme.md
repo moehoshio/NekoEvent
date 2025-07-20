@@ -7,7 +7,7 @@ This project is a standalone C++ event system module, extracted from the [NekoLc
 ## Introduction
 
 `neko-event.hpp` provides a modern, type-safe, and high-performance event handling system for C++. It supports synchronous/asynchronous events, event filtering, priority levels, scheduling (delayed and repeating tasks).  
-is suitable for game engines, application frameworks, or any C++ project requiring event-driven architecture.  
+It is suitable for game engines, application frameworks, or any C++ project requiring event-driven architecture. For example, you can use events to decouple business logic modules from UI modules, enabling flexible and maintainable interactions between different parts of your application.  
 
 It is easy to use—just include a single header file, and it provides a simple and intuitive API that allows developers to easily create and manage events.
 
@@ -41,26 +41,47 @@ If you prefer a single-header usage, you can use the [Release](https://github.co
 
 ## Basic Usage
 
+In the following example, we will create a simple event loop, subscribe to an event, and publish it.
+
 ```cpp
 #include "neko/event/event.hpp"
 #include <iostream>
 
-struct HelloWorldEvent {};
+struct StartEvent {};
+struct QuitEvent {};
 
 int main() {
     neko::event::EventLoop loop;
 
-    // Subscribe to HelloWorldEvent events
-    auto handlerId = loop.subscribe<>([](const HelloWorldEvent &event) {
-        std::cout << "Received HelloWorldEvent" << std::endl;
+    // Subscribe to StartEvent events
+    auto handlerId = loop.subscribe<StartEvent>([](const StartEvent &event) {
+        std::cout << "Received StartEvent" << std::endl;
     });
 
-    // Publish a HelloWorldEvent
-    loop.publish(HelloWorldEvent{});
+    // Publish a StartEvent
+    loop.publish(StartEvent{});
+
+    // Subscribe to QuitEvent events
+    // This will stop the event loop when QuitEvent is received
+    loop.subscribe<QuitEvent>([&loop](const QuitEvent &event) {
+        std::cout << "Received QuitEvent" << std::endl;
+        loop.stopLoop(); // Stop the event loop
+    });
+
+    // Publish a QuitEvent after 2000ms to stop the loop
+    loop.publishAfter(2000, QuitEvent{});
 
     // Run the event loop
     loop.run();
 }
+```
+
+result in the following output:
+
+``` sh
+Received StartEvent
+// After 2000ms
+Received QuitEvent
 ```
 
 ## More Usage Examples
