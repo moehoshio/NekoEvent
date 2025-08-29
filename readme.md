@@ -1,15 +1,12 @@
-# Neko event.hpp
+# Event.hpp
 
-This project is a standalone C++ event system module, extracted from the [NekoLc](https://github.com/moehoshio/NekoLauncher) project.
-
-[![License](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg)](./LICENSE)
-
-## Introduction
-
-`neko-event.hpp` provides a modern, type-safe, and high-performance event handling system for C++. It supports synchronous/asynchronous events, event filtering, priority levels, scheduling (delayed and repeating tasks).  
+This is a modern, type-safe, and high-performance event handling system for C++. It supports synchronous/asynchronous events, event filtering, priority levels, scheduling (delayed and repeating tasks).  
 It is suitable for game engines, application frameworks, or any C++ project requiring event-driven architecture. For example, you can use events to decouple business logic modules from UI modules, enabling flexible and maintainable interactions between different parts of your application.  
 
 It is easy to use—just include a single header file, and it provides a simple and intuitive API that allows developers to easily create and manage events.
+
+[![License](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg)](./LICENSE)
+
 
 ## Features
 
@@ -36,8 +33,6 @@ git clone https://github.com/moehoshio/event.hpp.git && cd event.hpp
 ```cpp
 #include "neko/event/event.hpp"
 ```
-
-If you prefer a single-header usage, you can use the [Release](https://github.com/moehoshio/event.hpp/releases/) version of `neko-event.hpp`, which makes integration into your project more convenient. However, note that it is only updated with each release and does not include the latest fixes and features.
 
 ## Basic Usage
 
