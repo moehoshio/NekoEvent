@@ -1,4 +1,4 @@
-# Event.hpp
+# NekoEvent
 
 This is a modern, type-safe, and high-performance event handling system for C++. It supports synchronous/asynchronous events, event filtering, priority levels, scheduling (delayed and repeating tasks).  
 It is suitable for game engines, application frameworks, or any C++ project requiring event-driven architecture. For example, you can use events to decouple business logic modules from UI modules, enabling flexible and maintainable interactions between different parts of your application.  
@@ -21,13 +21,48 @@ It is easy to use—just include a single header file, and it provides a simple 
 
 ## Integration
 
+### CMake
+
+1. Using CMake's `FetchContent` to include NekoEvent in your project:
+
+```cmake
+include(FetchContent)
+
+# Add NekoEvent to your CMake project
+FetchContent_Declare(
+    NekoEvent
+    GIT_REPOSITORY https://github.com/moehoshio/NekoEvent.git
+    GIT_TAG        main
+)
+FetchContent_MakeAvailable(NekoEvent)
+
+target_link_libraries(your_target PRIVATE NekoEvent)
+```
+
+2. Include the header files in your code
+
+```cpp
+#include <neko/event/event.hpp>
+```
+
+### Manual
+
+When installing manually, you need to manually fetch the dependency [`NekoSchema`](https://github.com/moehoshio/NekoSchema).
+
+After installing the dependency, please continue:
+
 1. Clone this repository to your local machine:
 
 ```sh
-git clone https://github.com/moehoshio/event.hpp.git && cd event.hpp
+git clone https://github.com/moehoshio/NekoEvent.git
 ```
 
-2. Copy the contents of the `event.hpp/include` folder into your project's `include` directory.
+2. Copy the contents of the `NekoEvent/include` folder into your project's `include` directory.
+
+```shell
+cp -r NekoEvent/include/ /path/to/your/include/
+```
+
 3. Add the following include directive in your source file:
 
 ```cpp
