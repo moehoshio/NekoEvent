@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "neko/schema/types.hpp"
+#include <neko/schema/types.hpp>
 
 // STL includes
 #include <any>
