@@ -468,9 +468,7 @@ namespace neko::event {
             // 1. There is a new event or task (notify)
             // 2. The wait time is reached
             // 3. Stop signal
-            loopCv.wait_until(lock, waitUntil, [this]() {
-                return stop.load();
-            });
+            loopCv.wait_until(lock, waitUntil);
         }
 
         /**
