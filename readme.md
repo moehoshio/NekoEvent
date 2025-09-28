@@ -224,6 +224,25 @@ Visual Studio generator：
 cmake --build ./build --config Debug --target RUN_TESTS
 ```
 
+If everything is set up correctly, you should see output similar to the following:
+
+```shell
+...
+[ RUN      ] EventLoopTest.DelayedEventPublishing
+[       OK ] EventLoopTest.DelayedEventPublishing (1107 ms)
+[ RUN      ] EventLoopTest.EventStatistics
+[       OK ] EventLoopTest.EventStatistics (207 ms)
+[ RUN      ] EventLoopTest.QueueSizeTracking
+[       OK ] EventLoopTest.QueueSizeTracking (55 ms)
+[ RUN      ] EventLoopTest.ExceptionHandling
+[       OK ] EventLoopTest.ExceptionHandling (113 ms)
+[----------] 12 tests from EventLoopTest (2571 ms total)
+
+[----------] Global test environment tear-down
+[==========] 12 tests from 1 test suite ran. (2572 ms total)
+[  PASSED  ] 12 tests.
+```
+
 ### Test Coverage
 
 The test suite covers:
