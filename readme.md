@@ -3,10 +3,9 @@
 This is a modern, type-safe, and high-performance event handling system for C++. It supports synchronous/asynchronous events, event filtering, priority levels, scheduling (delayed and repeating tasks).  
 It is suitable for game engines, application frameworks, or any C++ project requiring event-driven architecture. For example, you can use events to decouple business logic modules from UI modules, enabling flexible and maintainable interactions between different parts of your application.  
 
-It is easy to use—just include a single header file, and it provides a simple and intuitive API that allows developers to easily create and manage events.
+It is easy to use - a simple and intuitive API that allows developers to easily create and manage events.
 
-[![License](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg)](./LICENSE)
-
+[![License](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg)](LICENSE)
 
 ## Features
 
@@ -20,6 +19,12 @@ It is easy to use—just include a single header file, and it provides a simple 
 - Event statistics
 
 ## Integration
+
+### Prerequisites
+
+- C++20 or later
+- CMake 3.14 or later
+- Git
 
 ### CMake
 
@@ -66,7 +71,7 @@ cp -r NekoEvent/include/ /path/to/your/include/
 3. Add the following include directive in your source file:
 
 ```cpp
-#include "neko/event/event.hpp"
+#include <neko/event/event.hpp>
 ```
 
 ## Basic Usage
@@ -74,7 +79,7 @@ cp -r NekoEvent/include/ /path/to/your/include/
 In the following example, we will create a simple event loop, subscribe to an event, and publish it.
 
 ```cpp
-#include "neko/event/event.hpp"
+#include <neko/event/event.hpp>
 #include <iostream>
 
 struct StartEvent {};
@@ -189,6 +194,59 @@ std::cout << "Total events processed: " << stats.totalEvents << std::endl;
 std::cout << "Event max processing time: " << stats.maxProcessingTime << "ms" << std::endl;
 ```
 
+## Tests
+
+You can run the tests to verify that everything is working correctly.
+
+If you haven't configured the build yet, please run:
+
+```shell
+cmake -B ./build . -DNEKO_BUILD_TESTS=ON -DNEKO_AUTO_FETCH_DEPS=ON
+```
+
+Now, you can build the test files (you must build them manually at least once before running the tests!).
+
+```shell
+cmake --build ./build --config Debug
+```
+
+Then, you can run the tests with the following commands:
+
+Unix Makefile / Ninja generator：
+
+```shell
+cmake --build ./build --target test
+```
+
+Visual Studio generator：
+
+```shell
+cmake --build ./build --config Debug --target RUN_TESTS
+```
+
+### Test Coverage
+
+The test suite covers:
+
+- Basic event publishing and subscription
+- Multiple subscribers for same event type
+- Event unsubscription
+- Event filtering with custom filters
+- Event priority handling
+- Task scheduling (basic, delayed, repeating)
+- Task cancellation
+- Delayed event publishing
+- Event statistics and queue size tracking
+- Exception handling in event handlers
+
+### Disable Tests
+
+If you want to disable building and running tests, you can set the following CMake option when configuring your project:
+
+```shell
+cmake -B ./build . -DNEKO_BUILD_TESTS=OFF
+```
+
 ## License
 
-[License](./LICENSE) MIT OR Apache-2.0
+[License](LICENSE) MIT OR Apache-2.0

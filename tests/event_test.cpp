@@ -344,6 +344,7 @@ TEST_F(EventLoopTest, DelayedEventPublishing) {
     eventLoop->stopLoop();
     loopThread.join();
 
+    // Need to wait at least 1000ms to succeed
     std::this_thread::sleep_for(500ms);
     
     EXPECT_TRUE(eventReceived.load());
