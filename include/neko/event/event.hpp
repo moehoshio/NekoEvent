@@ -466,8 +466,7 @@ namespace neko::event {
 
             // Wait until:
             // 1. There is a new event or task (notify)
-            // 2. The wait time is reached
-            // 3. Stop signal
+            // 2. The wait time is reached (maxWaitTime or nextTaskTime)
             loopCv.wait_until(lock, waitUntil);
         }
 
@@ -790,7 +789,7 @@ namespace neko::event {
          */
         void run() {
             constexpr auto cleanupInterval = std::chrono::seconds(2);
-            constexpr auto maxWaitTime = std::chrono::milliseconds(500);
+            constexpr auto maxWaitTime = std::chrono::milliseconds(100);
 
             auto lastCleanup = std::chrono::steady_clock::now();
 
