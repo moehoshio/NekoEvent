@@ -1,0 +1,168 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          # Windows builds
+          - {
+              name: "Windows MSVC 2022 Debug",
+              os: windows-latest,
+              cc: "cl",
+              cxx: "cl",
+              build_type: "Debug",
+              generators: "Visual Studio 17 2022"
+            }
+          - {
+              name: "Windows MSVC 2022 Release",
+              os: windows-latest,
+              cc: "cl",
+              cxx: "cl",
+              build_type: "Release",
+              generators: "Visual Studio 17 2022"
+            }
+          
+          # Linux builds
+          - {
+              name: "Ubuntu GCC Debug",
+              os: ubuntu-latest,
+              cc: "gcc",
+              cxx: "g++",
+              build_type: "Debug",
+              generators: "Unix Makefiles"
+            }
+          - {
+              name: "Ubuntu GCC Release",
+              os: ubuntu-latest,
+              cc: "gcc",
+              cxx: "g++",
+              build_type: "Release",
+              generators: "Unix Makefiles"
+            }
+
+          # macOS builds
+          - {
+              name: "macOS Clang Debug",
+              os: macos-latest,
+              cc: "clang",
+              cxx: "clang++",
+              build_type: "Debug",
+              generators: "Unix Makefiles"
+            }
+          - {
+              name: "macOS Clang Release",
+              os: macos-latest,
+              cc: "clang",
+              cxx: "clang++",
+              build_type: "Release",
+              generators: "Unix Makefiles"
+            }
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies (Ubuntu)
+      if: startsWith(matrix.config.os, 'ubuntu')
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake ninja-build software-properties-common
+        
+        # Install GCC-13 from toolchain PPA
+        if [[ "${{ matrix.config.cxx }}" == g++-13 ]]; then
+          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install -y gcc-13 g++-13
+        # Install Clang-16 from LLVM APT repository
+        elif [[ "${{ matrix.config.cxx }}" == clang++-16 ]]; then
+          wget -O - https://apt.llvm.org/llvm.sh | sudo bash -s -- 16
+          sudo apt-get install -y clang-16 clang++-16
+        # Install other Clang versions
+        elif [[ "${{ matrix.config.cxx }}" == clang* ]]; then
+          sudo apt-get install -y ${{ matrix.config.cxx }}
+        fi
+
+    - name: Check compiler versions (Debug)
+      if: startsWith(matrix.config.os, 'ubuntu')
+      run: |
+        echo "=== Compiler Information ==="
+        ${{ matrix.config.cxx }} --version
+        echo "=== CMake Information ==="
+        cmake --version
+        echo "=== Standard Library Check ==="
+        echo '#include <version>' | ${{ matrix.config.cxx }} -std=c++20 -x c++ -E - 2>/dev/null && echo "C++20 headers available" || echo "C++20 headers missing"
+        echo '#include <source_location>' | ${{ matrix.config.cxx }} -std=c++20 -x c++ -E - 2>/dev/null && echo "source_location available" || echo "source_location missing"
+        echo '#include <format>' | ${{ matrix.config.cxx }} -std=c++20 -x c++ -E - 2>/dev/null && echo "format available" || echo "format missing"
+
+    - name: Install dependencies (macOS)
+      if: startsWith(matrix.config.os, 'macos')
+      run: |
+        brew install cmake ninja
+
+    - name: Install dependencies (Windows)
+      if: startsWith(matrix.config.os, 'windows')
+      run: |
+        if ("${{ matrix.config.generators }}" -eq "Ninja") {
+          choco install ninja
+          # Setup Clang
+          choco install llvm
+        }
+
+    - name: Set up MSVC environment (Windows)
+      if: startsWith(matrix.config.os, 'windows') && matrix.config.cc == 'cl'
+      uses: ilammy/msvc-dev-cmd@v1.13.0
+
+    - name: Configure CMake
+      run: |
+        if [[ "${{ matrix.config.generators }}" == *"Visual Studio"* ]]; then
+          # For Visual Studio generators, let CMake auto-detect the compiler
+          cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -G "${{ matrix.config.generators }}" -DNEKO_BUILD_TESTS=ON -DNEKO_AUTO_FETCH_DEPS=ON
+        else
+          # For other generators, specify the compiler explicitly
+          cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} -G "${{ matrix.config.generators }}" -DNEKO_BUILD_TESTS=ON -DNEKO_AUTO_FETCH_DEPS=ON
+        fi
+      shell: bash
+
+    - name: Build
+      run: cmake --build build --config ${{ matrix.config.build_type }} --parallel
+
+    - name: Run tests
+      working-directory: build
+      run: |
+        if [ "${{ runner.os }}" = "Windows" ]; then
+          if [ "${{ matrix.config.generators }}" = "Visual Studio 17 2022" ] || [ "${{ matrix.config.generators }}" = "Visual Studio 16 2019" ]; then
+            ctest -C ${{ matrix.config.build_type }} --output-on-failure --verbose
+          else
+            ctest --output-on-failure --verbose
+          fi
+        else
+          ctest --output-on-failure --verbose
+        fi
+      shell: bash
+
+    - name: Upload build artifacts (on failure)
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-logs-${{ matrix.config.name }}
+        path: |
+          build/CMakeFiles/CMakeOutput.log
+          build/CMakeFiles/CMakeError.log
+          build/Testing/Temporary/LastTest.log
