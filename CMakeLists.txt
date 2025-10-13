@@ -5,10 +5,6 @@ project(NekoEvent VERSION 1.0 LANGUAGES CXX)
 # === Config ====
 # ================
 
-# Neko Module common options
-option(NEKO_AUTO_FETCH_DEPS "Neko Automatically fetch dependencies" ON)
-option(NEKO_BUILD_TESTS "Neko Build tests" ON)
-
 # NekoEvent project specific options
 option(NEKO_EVENT_BUILD_TESTS "Neko Event Build tests" ON)
 option(NEKO_EVENT_AUTO_FETCH_DEPS "Neko Event Automatically fetch dependencies" ON)
@@ -19,15 +15,15 @@ message(STATUS "Start configuration Neko Event...")
 message(STATUS "NekoEvent configuration summary:")
 message(STATUS "  - CMake version: ${CMAKE_VERSION}")
 message(STATUS "")
-message(STATUS "  - Neko Auto fetch deps: ${NEKO_EVENT_AUTO_FETCH_DEPS} common: ${NEKO_AUTO_FETCH_DEPS} ")
-message(STATUS "  - Neko Build tests: ${NEKO_EVENT_BUILD_TESTS} common: ${NEKO_BUILD_TESTS}")
+message(STATUS "  - Neko Auto fetch deps: ${NEKO_EVENT_AUTO_FETCH_DEPS}")
+message(STATUS "  - Neko Build tests: ${NEKO_EVENT_BUILD_TESTS}")
 message(STATUS "")
 message(STATUS "Dependency summary:")
 message(STATUS "  - No dependencies required")
 message(STATUS "")
 
 
-if(NEKO_EVENT_AUTO_FETCH_DEPS OR (NEKO_AUTO_FETCH_DEPS AND NEKO_EVENT_AUTO_FETCH_DEPS))
+if(NEKO_EVENT_AUTO_FETCH_DEPS)
     include(FetchContent)
 
     FetchContent_Declare(
@@ -73,12 +69,12 @@ endif()
 # ==== Tests =====
 # ================
 
-if(NEKO_EVENT_BUILD_TESTS OR (NEKO_BUILD_TESTS AND NEKO_EVENT_BUILD_TESTS))
+if(NEKO_EVENT_BUILD_TESTS)
     enable_testing()
     message(STATUS "NekoEvent tests enabled")
 
-    if (NOT NEKO_EVENT_AUTO_FETCH_DEPS AND NOT NEKO_AUTO_FETCH_DEPS)
-        message(FATAL_ERROR "GTest is required for building tests. Please enable NEKO_AUTO_FETCH_DEPS")
+    if (NOT NEKO_EVENT_AUTO_FETCH_DEPS)
+        message(FATAL_ERROR "GTest is required for building tests. Please enable NEKO_EVENT_AUTO_FETCH_DEPS")
     endif()
     
     add_executable(event_tests tests/event_test.cpp)
