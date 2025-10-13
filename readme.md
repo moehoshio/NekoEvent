@@ -6,6 +6,9 @@ It is suitable for game engines, application frameworks, or any C++ project requ
 It is easy to use - a simple and intuitive API that allows developers to easily create and manage events.
 
 [![License](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg)](LICENSE)
+![Require](https://img.shields.io/badge/%20Require%20-%3E=%20C++%2020-orange.svg)
+[![CMake](https://img.shields.io/badge/CMake-3.14+-green.svg)](https://cmake.org/)
+
 
 ## Features
 
@@ -194,14 +197,17 @@ std::cout << "Total events processed: " << stats.totalEvents << std::endl;
 std::cout << "Event max processing time: " << stats.maxProcessingTime << "ms" << std::endl;
 ```
 
-## Tests
+## Test
 
 You can run the tests to verify that everything is working correctly.
 
 If you haven't configured the build yet, please run:
 
 ```shell
-cmake -B ./build . -DNEKO_BUILD_TESTS=ON -DNEKO_AUTO_FETCH_DEPS=ON
+# Global options
+cmake -D NEKO_BUILD_TESTS=ON -D NEKO_AUTO_FETCH_DEPS=ON -B ./build -S .
+# or specify to Neko Event only
+cmake -D NEKO_EVENT_BUILD_TESTS=ON -D NEKO_EVENT_AUTO_FETCH_DEPS=ON -B ./build -S .
 ```
 
 Now, you can build the test files (you must build them manually at least once before running the tests!).
@@ -212,16 +218,8 @@ cmake --build ./build --config Debug
 
 Then, you can run the tests with the following commands:
 
-Unix Makefile / Ninja generator：
-
 ```shell
-cmake --build ./build --target test
-```
-
-Visual Studio generator：
-
-```shell
-cmake --build ./build --config Debug --target RUN_TESTS
+cd ./build && ctest --output-on-failure
 ```
 
 If everything is set up correctly, you should see output similar to the following:
@@ -263,8 +261,18 @@ The test suite covers:
 If you want to disable building and running tests, you can set the following CMake option when configuring your project:
 
 ```shell
-cmake -B ./build . -DNEKO_BUILD_TESTS=OFF
+cmake -B ./build -DNEKO_EVENT_BUILD_TESTS=OFF -S .
 ```
+
+or
+
+```shell
+cmake -B ./build -DNEKO_BUILD_TESTS=OFF -S .
+```
+
+(Note: This will disable tests for all Neko modules!)
+
+This will skip test targets during the build process.
 
 ## License
 
@@ -272,6 +280,7 @@ cmake -B ./build . -DNEKO_BUILD_TESTS=OFF
 
 ## See More
 
+- [NekoNet](https://github.com/moehoshio/NekoNet): A modern , easy-to-use C++20 networking library via libcurl.
 - [NekoLog](https://github.com/moehoshio/NekoLog): An easy-to-use, modern, lightweight, and efficient C++20 logging library.
 - [NekoEvent](https://github.com/moehoshio/NekoEvent): A modern easy to use type-safe and high-performance event handling system for C++.
 - [NekoSchema](https://github.com/moehoshio/NekoSchema): A lightweight, header-only C++20 schema library.
