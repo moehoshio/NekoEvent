@@ -36,7 +36,7 @@ if(NEKO_EVENT_AUTO_FETCH_DEPS)
     FetchContent_MakeAvailable(NekoSchema)
 
     if(NOT GTEST_FOUND AND NEKO_EVENT_BUILD_TESTS)
-        message(STATUS "GTest not found. Fetching GoogleTest...")
+        message(STATUS "GTest not found; Neko Event Fetching GoogleTest...")
 
         FetchContent_Declare(
             googletest
@@ -81,6 +81,7 @@ if(NEKO_EVENT_BUILD_TESTS)
     endif()
     
     add_executable(event_tests tests/event_test.cpp)
+    target_include_directories(event_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
     target_link_libraries(event_tests PRIVATE NekoEvent GTest::gtest GTest::gtest_main)
     target_compile_features(event_tests PRIVATE cxx_std_20)
 
