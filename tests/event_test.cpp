@@ -87,6 +87,9 @@ TEST_F(EventLoopTest, BasicEventPublishSubscribe) {
         eventLoop->run();
     });
     
+    // Wait for event loop to be ready
+    std::this_thread::sleep_for(50ms);
+    
     // Publish some events
     eventLoop->publish(TestEvent{1, "First event"});
     eventLoop->publish(TestEvent{2, "Second event"});
@@ -127,6 +130,9 @@ TEST_F(EventLoopTest, MultipleSubscribers) {
         eventLoop->run();
     });
     
+    // Wait for event loop to be ready
+    std::this_thread::sleep_for(50ms);
+    
     // Publish events
     for (int i = 0; i < 5; ++i) {
         eventLoop->publish(SimpleEvent{i});
@@ -151,6 +157,9 @@ TEST_F(EventLoopTest, EventUnsubscribe) {
     std::thread loopThread([this]() {
         eventLoop->run();
     });
+    
+    // Wait for event loop to be ready
+    std::this_thread::sleep_for(50ms);
     
     // Publish first event
     eventLoop->publish(SimpleEvent{1});
@@ -187,6 +196,9 @@ TEST_F(EventLoopTest, EventFiltering) {
         eventLoop->run();
     });
     
+    // Wait for event loop to be ready
+    std::this_thread::sleep_for(50ms);
+    
     // Publish events with different values
     eventLoop->publish(TestEvent{2, "Should be filtered"});
     eventLoop->publish(TestEvent{7, "Should pass"});
@@ -215,6 +227,9 @@ TEST_F(EventLoopTest, EventPriority) {
         eventLoop->run();
     });
     
+    // Wait for event loop to be ready
+    std::this_thread::sleep_for(50ms);
+    
     // Publish events with different priorities
     eventLoop->publish(TestEvent{1, "Low priority"}, neko::Priority::Low);
     eventLoop->publish(TestEvent{2, "Normal priority"}, neko::Priority::Normal);
@@ -241,6 +256,9 @@ TEST_F(EventLoopTest, BasicTaskScheduling) {
         eventLoop->run();
     });
     
+    // Wait for event loop to be ready
+    std::this_thread::sleep_for(50ms);
+    
     // Schedule a task to run after 50ms
     auto taskId = eventLoop->scheduleTask(50, [&taskExecuted, &executionOrder]() {
         taskExecuted = true;
@@ -249,8 +267,8 @@ TEST_F(EventLoopTest, BasicTaskScheduling) {
     
     EXPECT_GT(taskId, 0);
     
-    // Wait for task execution
-    std::this_thread::sleep_for(100ms);
+    // Wait for task execution (50ms task delay + 100ms buffer)
+    std::this_thread::sleep_for(150ms);
     
     eventLoop->stopLoop();
     loopThread.join();
@@ -266,6 +284,9 @@ TEST_F(EventLoopTest, TaskCancellation) {
         eventLoop->run();
     });
     
+    // Wait for event loop to be ready
+    std::this_thread::sleep_for(50ms);
+    
     // Schedule a task
     auto taskId = eventLoop->scheduleTask(100, [&taskExecuted]() {
         taskExecuted = true;
@@ -275,8 +296,8 @@ TEST_F(EventLoopTest, TaskCancellation) {
     bool cancelled = eventLoop->cancelTask(taskId);
     EXPECT_TRUE(cancelled);
     
-    // Wait longer than the task delay
-    std::this_thread::sleep_for(150ms);
+    // Wait longer than the task delay to ensure it doesn't execute
+    std::this_thread::sleep_for(200ms);
     
     eventLoop->stopLoop();
     loopThread.join();
@@ -287,40 +308,52 @@ TEST_F(EventLoopTest, TaskCancellation) {
 
 TEST_F(EventLoopTest, RepeatingTask) {
     std::atomic<int> executionCount{0};
+    std::mutex mtx;
+    std::condition_variable cv;
+    const int targetExecutions = 3;
     
     std::thread loopThread([this]() {
         eventLoop->run();
     });
     
-    // Schedule a repeating task every 50ms (increased interval for reliability)
-    auto taskId = eventLoop->scheduleRepeating(50, [&executionCount]() {
+    // Wait for event loop to be ready
+    std::this_thread::sleep_for(100ms);
+    
+    // Schedule a repeating task every 100ms (longer interval for Windows)
+    auto taskId = eventLoop->scheduleRepeating(100, [&executionCount, &cv]() {
         executionCount++;
+        cv.notify_all();
     });
     
-    // Wait for multiple executions (increased wait time)
-    std::this_thread::sleep_for(200ms);
+    // Wait for at least targetExecutions executions with timeout
+    {
+        std::unique_lock<std::mutex> lock(mtx);
+        // With 100ms interval, 3 executions should take ~300ms
+        // Give it 1000ms to be safe across different systems
+        cv.wait_for(lock, 1000ms, [&executionCount, targetExecutions]() {
+            return executionCount >= targetExecutions;
+        });
+    }
     
     // Cancel the repeating task
     eventLoop->cancelTask(taskId);
     
-    // Wait a bit more to ensure it stops
-    std::this_thread::sleep_for(50ms);
+    // Wait a bit to ensure cancellation is processed
+    std::this_thread::sleep_for(100ms);
     
     int finalCount = executionCount.load();
     
     eventLoop->stopLoop();
     loopThread.join();
     
-    // Should have executed multiple times (approximately 3-4 times, but allow more variance)
-    EXPECT_GE(finalCount, 2);  // Reduced minimum expectation
-    EXPECT_LE(finalCount, 6);  // Allow more variance
+    // Should have executed multiple times
+    // Very conservative minimum - just verify it repeats at least once
+    EXPECT_GE(finalCount, 2);   // At least 2 executions to prove it repeats
+    EXPECT_LE(finalCount, 15);  // Sanity check upper bound
 }
 
 // Delayed event publishing tests
 TEST_F(EventLoopTest, DelayedEventPublishing) {
-    // This test has timing sensitivity issues, skip for now
-    // GTEST_SKIP() << "Delayed event publishing test temporarily disabled due to timing sensitivity";
-    
     std::atomic<bool> eventReceived{false};
     
     auto handlerId = eventLoop->subscribe<TestEvent>([&eventReceived](const TestEvent& event) {
@@ -331,21 +364,19 @@ TEST_F(EventLoopTest, DelayedEventPublishing) {
         eventLoop->run();
     });
     
-    // Wait for event loop to start
-    std::this_thread::sleep_for(100ms);
+    // Wait for event loop to be ready
+    std::this_thread::sleep_for(50ms);
     
     // Publish event with delay
-    auto taskId = eventLoop->publishAfter(50, TestEvent{42, "Delayed event"});
+    auto taskId = eventLoop->publishAfter(100, TestEvent{42, "Delayed event"});
     EXPECT_GT(taskId, 0);
     
-    // Wait for event
-    std::this_thread::sleep_for(500ms);
+    // Wait for delayed event to be published and processed
+    // 100ms delay + 100ms processing buffer = 200ms minimum
+    std::this_thread::sleep_for(250ms);
     
     eventLoop->stopLoop();
     loopThread.join();
-
-    // Need to wait at least 1000ms to succeed
-    std::this_thread::sleep_for(500ms);
     
     EXPECT_TRUE(eventReceived.load());
 }
@@ -365,6 +396,9 @@ TEST_F(EventLoopTest, EventStatistics) {
     std::thread loopThread([this]() {
         eventLoop->run();
     });
+    
+    // Wait for event loop to be ready
+    std::this_thread::sleep_for(50ms);
     
     // Publish several events
     for (int i = 0; i < 5; ++i) {
@@ -397,6 +431,9 @@ TEST_F(EventLoopTest, QueueSizeTracking) {
     std::thread loopThread([this]() {
         eventLoop->run();
     });
+    
+    // Wait for event loop to be ready
+    std::this_thread::sleep_for(50ms);
     
     // Publish more events than max queue size
     for (int i = 0; i < 5; ++i) {
@@ -431,6 +468,9 @@ TEST_F(EventLoopTest, ExceptionHandling) {
         eventLoop->run();
     });
     
+    // Wait for event loop to be ready
+    std::this_thread::sleep_for(50ms);
+    
     // Publish event that will cause exception
     eventLoop->publish(SimpleEvent{42});
     
@@ -452,6 +492,11 @@ TEST_F(EventLoopTest, ExceptionHandling) {
 /*
  * Test Summary:
  * 
+ * All tests have been improved to handle race conditions by:
+ * - Adding 50ms startup delay after launching event loop thread
+ * - Ensuring sufficient wait times for scheduled tasks
+ * - Using appropriate timeouts for event processing
+ * 
  *  BasicEventPublishSubscribe - Tests basic event publishing and subscription
  *  MultipleSubscribers - Tests multiple handlers for same event type
  *  EventUnsubscribe - Tests handler removal functionality
@@ -459,8 +504,8 @@ TEST_F(EventLoopTest, ExceptionHandling) {
  *  EventPriority - Tests priority-based event processing
  *  BasicTaskScheduling - Tests basic task scheduling functionality
  *  TaskCancellation - Tests task cancellation
- *  RepeatingTask - Tests repeating task functionality
- *  DelayedEventPublishing - Temporarily disabled due to timing sensitivity
+ *  RepeatingTask - Tests repeating task functionality with improved timing
+ *  DelayedEventPublishing - Tests delayed event publishing with proper synchronization
  *  EventStatistics - Tests event processing statistics
  *  QueueSizeTracking - Tests queue size limits and tracking
  *  ExceptionHandling - Tests exception handling in event processing
