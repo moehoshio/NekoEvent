@@ -355,9 +355,12 @@ TEST_F(EventLoopTest, RepeatingTask) {
 // Delayed event publishing tests
 TEST_F(EventLoopTest, DelayedEventPublishing) {
     std::atomic<bool> eventReceived{false};
+    std::mutex mtx;
+    std::condition_variable cv;
     
-    auto handlerId = eventLoop->subscribe<TestEvent>([&eventReceived](const TestEvent& event) {
+    auto handlerId = eventLoop->subscribe<TestEvent>([&eventReceived, &cv](const TestEvent& event) {
         eventReceived = true;
+        cv.notify_all();
     });
     
     std::thread loopThread([this]() {
@@ -372,8 +375,14 @@ TEST_F(EventLoopTest, DelayedEventPublishing) {
     EXPECT_GT(taskId, 0);
     
     // Wait for delayed event to be published and processed
-    // 100ms delay + 100ms processing buffer = 200ms minimum
-    std::this_thread::sleep_for(250ms);
+    // Use condition variable to wait for event reception with timeout
+    {
+        std::unique_lock<std::mutex> lock(mtx);
+        // 100ms delay + generous timeout for processing
+        cv.wait_for(lock, 1000ms, [&eventReceived]() {
+            return eventReceived.load();
+        });
+    }
     
     eventLoop->stopLoop();
     loopThread.join();
@@ -494,6 +503,7 @@ TEST_F(EventLoopTest, ExceptionHandling) {
  * 
  * All tests have been improved to handle race conditions by:
  * - Adding 50ms startup delay after launching event loop thread
+ * - Using condition variables with timeouts for time-sensitive tests
  * - Ensuring sufficient wait times for scheduled tasks
  * - Using appropriate timeouts for event processing
  * 
@@ -504,8 +514,8 @@ TEST_F(EventLoopTest, ExceptionHandling) {
  *  EventPriority - Tests priority-based event processing
  *  BasicTaskScheduling - Tests basic task scheduling functionality
  *  TaskCancellation - Tests task cancellation
- *  RepeatingTask - Tests repeating task functionality with improved timing
- *  DelayedEventPublishing - Tests delayed event publishing with proper synchronization
+ *  RepeatingTask - Tests repeating task with condition variable synchronization
+ *  DelayedEventPublishing - Tests delayed event publishing with condition variable synchronization
  *  EventStatistics - Tests event processing statistics
  *  QueueSizeTracking - Tests queue size limits and tracking
  *  ExceptionHandling - Tests exception handling in event processing
