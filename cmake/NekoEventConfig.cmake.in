@@ -1,0 +1,16 @@
+@PACKAGE_INIT@
+
+# Find required dependencies
+# NekoSchema is a header-only dependency, just need to find it for includes
+include(CMakeFindDependencyMacro)
+find_dependency(NekoSchema REQUIRED)
+
+# Include the targets file
+include("${CMAKE_CURRENT_LIST_DIR}/NekoEventTargets.cmake")
+
+# Recreate the Neko::Event alias for consumers
+if(TARGET NekoEvent AND NOT TARGET Neko::Event)
+	add_library(Neko::Event ALIAS NekoEvent)
+endif()
+
+check_required_components(NekoEvent)

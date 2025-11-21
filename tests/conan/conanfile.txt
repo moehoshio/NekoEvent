@@ -1,0 +1,6 @@
+[requires]
+neko-event/[*]
+
+[generators]
+CMakeDeps
+CMakeToolchain

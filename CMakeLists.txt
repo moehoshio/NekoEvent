@@ -155,4 +155,57 @@ else()
     message(STATUS "NekoEvent tests disabled (NEKO_EVENT_BUILD_TESTS=OFF)")
 endif()
 
+
+# ================
+# == Install =====
+# ================
+
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+# Install headers
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    FILES_MATCHING 
+    PATTERN "*.hpp"
+    PATTERN "*.cppm"
+)
+
+# Install targets
+install(TARGETS NekoEvent
+    EXPORT NekoEventTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    FILE_SET CXX_MODULES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+# Install export targets
+install(EXPORT NekoEventTargets
+    FILE NekoEventTargets.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/NekoEvent
+)
+
+# Create and install Config file
+configure_package_config_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/NekoEventConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/NekoEventConfig.cmake
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/NekoEvent
+)
+
+# Create and install Version file
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/NekoEventConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+    ARCH_INDEPENDENT
+)
+
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/NekoEventConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/NekoEventConfigVersion.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/NekoEvent
+)
+
 message(STATUS "Neko Event End of configuration")
