@@ -8,6 +8,8 @@
 
 #pragma once
 
+#if !defined(NEKO_EVENT_ENABLE_MODULE) || (NEKO_EVENT_ENABLE_MODULE == false)
+
 #include <neko/schema/types.hpp>
 
 // STL includes
@@ -37,6 +39,7 @@
 #include <unordered_set>
 
 #include <algorithm>
+#endif
 
 /**
  * @brief Event namespace

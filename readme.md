@@ -8,18 +8,20 @@ It is easy to use - a simple and intuitive API that allows developers to easily 
 [![License](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg)](LICENSE)
 ![Require](https://img.shields.io/badge/%20Require%20-%3E=%20C++%2020-orange.svg)
 [![CMake](https://img.shields.io/badge/CMake-3.14+-green.svg)](https://cmake.org/)
+![Module Support](https://img.shields.io/badge/Modules-C%2B%2B20-blueviolet.svg)
 
 
 ## Features
 
-- Cross-platform
-- Header-only
-- Type-safe event data of any type
-- Event priority and sync/async processing modes
-- Extensible event filters and handlers
-- Built-in task scheduling (delayed and repeating)
-- Thread-safe
-- Event statistics
+- **Event priority**
+- **Sync/Async processing modes**
+- **Extensible event filters and handlers**
+- **Built-in task scheduling (delayed and repeating)**
+- **Header-only**
+- **Type-safe**
+- **Thread-safe**
+- **Event statistics**
+- **C++20 Modules support**
 
 ## Integration
 
@@ -44,7 +46,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(NekoEvent)
 
-target_link_libraries(your_target PRIVATE NekoEvent)
+target_link_libraries(your_target PRIVATE Neko::Event)
 ```
 
 2. Include the header files in your code
@@ -75,6 +77,47 @@ cp -r NekoEvent/include/ /path/to/your/include/
 
 ```cpp
 #include <neko/event/event.hpp>
+```
+
+### C++20 Module Support
+
+NekoEvent supports C++20 modules
+
+#### Building with Module Support
+
+To enable C++20 module support, use the `NEKO_EVENT_ENABLE_MODULE` option:
+
+```cmake
+include(FetchContent)
+
+FetchContent_Declare(
+    NekoEvent
+    GIT_REPOSITORY https://github.com/moehoshio/NekoEvent.git
+    GIT_TAG        main
+)
+
+# Enable module support
+set(NEKO_EVENT_ENABLE_MODULE ON CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(NekoEvent)
+
+# Link against the module target
+add_executable(your_target main.cpp)
+target_link_libraries(your_target PRIVATE Neko::Event::Module)
+```
+
+#### Using the Module
+
+Instead of including headers, simply import the module:
+
+```cpp
+#include <iostream>
+import neko.event;
+
+int main() {
+    neko::event::EventLoop loop;
+    // Your code here
+}
 ```
 
 ## Basic Usage
@@ -204,13 +247,10 @@ You can run the tests to verify that everything is working correctly.
 If you haven't configured the build yet, please run:
 
 ```shell
-# Global options
-cmake -D NEKO_BUILD_TESTS=ON -D NEKO_AUTO_FETCH_DEPS=ON -B ./build -S .
-# or specify to Neko Event only
-cmake -D NEKO_EVENT_BUILD_TESTS=ON -D NEKO_EVENT_AUTO_FETCH_DEPS=ON -B ./build -S .
+cmake -B ./build -D NEKO_EVENT_BUILD_TESTS=ON -D NEKO_EVENT_AUTO_FETCH_DEPS=ON -S .
 ```
 
-Now, you can build the test files (you must build them manually at least once before running the tests!).
+Now, you can build the test files with the following command:
 
 ```shell
 cmake --build ./build --config Debug
@@ -241,21 +281,6 @@ If everything is set up correctly, you should see output similar to the followin
 [  PASSED  ] 12 tests.
 ```
 
-### Test Coverage
-
-The test suite covers:
-
-- Basic event publishing and subscription
-- Multiple subscribers for same event type
-- Event unsubscription
-- Event filtering with custom filters
-- Event priority handling
-- Task scheduling (basic, delayed, repeating)
-- Task cancellation
-- Delayed event publishing
-- Event statistics and queue size tracking
-- Exception handling in event handlers
-
 ### Disable Tests
 
 If you want to disable building and running tests, you can set the following CMake option when configuring your project:
@@ -263,14 +288,6 @@ If you want to disable building and running tests, you can set the following CMa
 ```shell
 cmake -B ./build -DNEKO_EVENT_BUILD_TESTS=OFF -S .
 ```
-
-or
-
-```shell
-cmake -B ./build -DNEKO_BUILD_TESTS=OFF -S .
-```
-
-(Note: This will disable tests for all Neko modules!)
 
 This will skip test targets during the build process.
 
