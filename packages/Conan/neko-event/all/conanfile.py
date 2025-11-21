@@ -6,7 +6,7 @@ import os
 
 class NekoEventConan(ConanFile):
     name = "neko-event"
-    version = "1.0.0"
+    version = "1.0.1"
     license = "MIT OR Apache-2.0"
     author = "moehoshio"
     url = "https://github.com/moehoshio/NekoEvent"
@@ -79,3 +79,4 @@ class NekoEventConan(ConanFile):
     
     def package_id(self):
         self.info.clear()
+
