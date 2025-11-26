@@ -9,19 +9,19 @@ It is easy to use - a simple and intuitive API that allows developers to easily 
 ![Require](https://img.shields.io/badge/%20Require%20-%3E=%20C++%2020-orange.svg)
 [![CMake](https://img.shields.io/badge/CMake-3.14+-green.svg)](https://cmake.org/)
 ![Module Support](https://img.shields.io/badge/Modules-C%2B%2B20-blueviolet.svg)
-
+[![CI Status](https://github.com/moehoshio/NekoEvent/actions/workflows/ci.yml/badge.svg)](https://github.com/moehoshio/NekoEvent/actions/workflows/ci.yml)
 
 ## Features
 
-- **Event priority**
-- **Sync/Async processing modes**
-- **Extensible event filters and handlers**
-- **Built-in task scheduling (delayed and repeating)**
-- **Header-only**
-- **Type-safe**
-- **Thread-safe**
-- **Event statistics**
-- **C++20 Modules support**
+- **Event priority**: Control event processing order
+- **Sync/Async processing**: Flexible event handling modes
+- **Extensible filters and handlers**: Customize event processing
+- **Task scheduling**: Built-in delayed and repeating tasks
+- **Header-only**: Easy integration with minimal setup
+- **Type-safe**: Leverages C++20 type system
+- **Thread-safe**: Safe for concurrent use
+- **Event statistics**: Track and monitor event activity
+- **C++20 Modules support**: Optional modern C++ module support
 
 ## Integration
 
