@@ -7,9 +7,6 @@
 
 module;
 
-#if defined(__cpp_lib_modules) && (__cpp_lib_modules >= 202207L)
-import std;
-#else
 // Global module fragment - include headers that should not be exported
 #include <any>
 
@@ -37,11 +34,10 @@ import std;
 #include <unordered_set>
 
 #include <algorithm>
-#endif
-
-import neko.schema;
 
 export module neko.event;
+
+import neko.schema;
 
 // Control header files to not import dependencies (dependencies are declared and imported by the cppm)
 #define NEKO_EVENT_ENABLE_MODULE true

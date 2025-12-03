@@ -464,7 +464,7 @@ namespace neko::event {
             auto waitUntil = now + maxWaitTime;
 
             if (nextTaskTime.has_value()) {
-                waitUntil = std::min(waitUntil, *nextTaskTime);
+                waitUntil = (waitUntil < *nextTaskTime) ? waitUntil : *nextTaskTime;
             }
 
             // Wait until:
