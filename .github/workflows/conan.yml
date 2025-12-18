@@ -79,15 +79,9 @@ jobs:
         $conanfile = $conanfile -replace 'exports_sources = .*', 'exports_sources = "CMakeLists.txt", "include/*", "cmake/*", "LICENSE", "README.md"'
         $conanfile | Set-Content "conanfile.py" -NoNewline
 
-    - name: Create Conan package from local source (Unix)
-      if: runner.os != 'Windows'
+    - name: Create Conan package from local source
       run: |
-        conan create . --build=missing
-
-    - name: Create Conan package from local source (Windows)
-      if: runner.os == 'Windows'
-      run: |
-        conan create . --build=missing
+        conan create . --version 1.0.1 --build=missing
 
     - name: Verify Conan package installation
       run: |
