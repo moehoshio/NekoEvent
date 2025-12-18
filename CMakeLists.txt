@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(NekoEvent VERSION 1.0 LANGUAGES CXX)
+project(NekoEvent VERSION 1.0.1 LANGUAGES CXX)
 
 # ================
 # === Config ====
@@ -17,6 +17,7 @@ find_package(GTest QUIET)
 message(STATUS "Start configuration Neko Event...")
 message(STATUS "")
 message(STATUS "NekoEvent configuration summary:")
+message(STATUS "  - Project version: ${PROJECT_VERSION}")
 message(STATUS "  - CMake version: ${CMAKE_VERSION}")
 message(STATUS "")
 message(STATUS "  - Neko Event Auto fetch deps: ${NEKO_EVENT_AUTO_FETCH_DEPS}")
