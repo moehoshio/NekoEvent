@@ -17,7 +17,7 @@ jobs:
           # Windows builds
           - {
               name: "Windows MSVC Debug",
-              os: windows-latest,
+              os: windows-2022,
               cc: "cl",
               cxx: "cl",
               build_type: "Debug",
@@ -25,7 +25,7 @@ jobs:
             }
           - {
               name: "Windows MSVC Release",
-              os: windows-latest,
+              os: windows-2022,
               cc: "cl",
               cxx: "cl",
               build_type: "Release",
@@ -33,7 +33,7 @@ jobs:
             }
           - {
               name: "Windows Clang Debug",
-              os: windows-latest,
+              os: windows-2022,
               cc: "clang",
               cxx: "clang++",
               build_type: "Debug",
@@ -41,7 +41,7 @@ jobs:
             }
           - {
               name: "Windows Clang Release",
-              os: windows-latest,
+              os: windows-2022,
               cc: "clang",
               cxx: "clang++",
               build_type: "Release",
