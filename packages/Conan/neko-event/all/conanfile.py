@@ -11,7 +11,7 @@ required_conan_version = ">=2.1"
 class NekoEventConan(ConanFile):
     name = "neko-event"
     license = "MIT OR Apache-2.0"
-    homepage = "https://github.com/moehoshio/NekoEvent"
+    homepage = "https://github.com/hoshimoe/NekoEvent"
     url = "https://github.com/conan-io/conan-center-index"
     description = "A modern easy to use type-safe and high-performance event handling system for C++"
     topics = ("c++20", "event", "neko","event-dispatcher", "event-bus", "event-system", "pub-sub", "observer-pattern")

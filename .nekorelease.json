@@ -1,6 +1,6 @@
 {
   "packageName": "neko-event",
-  "repositoryUrl": "https://github.com/moehoshio/NekoEvent",
+  "repositoryUrl": "https://github.com/hoshimoe/NekoEvent",
   "packageManagers": [
     "vcpkg",
     "Conan"
