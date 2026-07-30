@@ -1,7 +1,7 @@
 /**
  * @file event_module_test.cpp
  * @brief NekoEvent system tests using C++20 modules
- * @author moehoshio
+ * @author hoshimoe
  * @copyright Copyright (c) 2025 Hoshi
  * @license MIT OR Apache-2.0
  * 

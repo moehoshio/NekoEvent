@@ -9,7 +9,7 @@ It is easy to use - a simple and intuitive API that allows developers to easily 
 ![Require](https://img.shields.io/badge/%20Require%20-%3E=%20C++%2020-orange.svg)
 [![CMake](https://img.shields.io/badge/CMake-3.14+-green.svg)](https://cmake.org/)
 ![Module Support](https://img.shields.io/badge/Modules-C%2B%2B20-blueviolet.svg)
-[![CI Status](https://github.com/moehoshio/NekoEvent/actions/workflows/ci.yml/badge.svg)](https://github.com/moehoshio/NekoEvent/actions/workflows/ci.yml)
+[![CI Status](https://github.com/hoshimoe/NekoEvent/actions/workflows/ci.yml/badge.svg)](https://github.com/hoshimoe/NekoEvent/actions/workflows/ci.yml)
 
 ## Features
 
@@ -41,7 +41,7 @@ include(FetchContent)
 # Add NekoEvent to your CMake project
 FetchContent_Declare(
     NekoEvent
-    GIT_REPOSITORY https://github.com/moehoshio/NekoEvent.git
+    GIT_REPOSITORY https://github.com/hoshimoe/NekoEvent.git
     GIT_TAG        main
 )
 FetchContent_MakeAvailable(NekoEvent)
@@ -57,14 +57,14 @@ target_link_libraries(your_target PRIVATE Neko::Event)
 
 ### Manual
 
-When installing manually, you need to manually fetch the dependency [`NekoSchema`](https://github.com/moehoshio/NekoSchema).
+When installing manually, you need to manually fetch the dependency [`NekoSchema`](https://github.com/hoshimoe/NekoSchema).
 
 After installing the dependency, please continue:
 
 1. Clone this repository to your local machine:
 
 ```sh
-git clone https://github.com/moehoshio/NekoEvent.git
+git clone https://github.com/hoshimoe/NekoEvent.git
 ```
 
 2. Copy the contents of the `NekoEvent/include` folder into your project's `include` directory.
@@ -92,7 +92,7 @@ include(FetchContent)
 
 FetchContent_Declare(
     NekoEvent
-    GIT_REPOSITORY https://github.com/moehoshio/NekoEvent.git
+    GIT_REPOSITORY https://github.com/hoshimoe/NekoEvent.git
     GIT_TAG        main
 )
 
@@ -297,10 +297,10 @@ This will skip test targets during the build process.
 
 ## See More
 
-- [NekoNet](https://github.com/moehoshio/NekoNet): A modern , easy-to-use C++20 networking library via libcurl.
-- [NekoLog](https://github.com/moehoshio/NekoLog): An easy-to-use, modern, lightweight, and efficient C++20 logging library.
-- [NekoEvent](https://github.com/moehoshio/NekoEvent): A modern easy to use type-safe and high-performance event handling system for C++.
-- [NekoSchema](https://github.com/moehoshio/NekoSchema): A lightweight, header-only C++20 schema library.
-- [NekoSystem](https://github.com/moehoshio/NekoSystem): A modern C++20 cross-platform system utility library.
-- [NekoFunction](https://github.com/moehoshio/NekoFunction): A comprehensive modern C++ utility library that provides practical functions for common programming tasks.
-- [NekoThreadPool](https://github.com/moehoshio/NekoThreadPool): An easy to use and efficient C++ 20 thread pool that supports priorities and submission to specific threads.
+- [NekoNet](https://github.com/hoshimoe/NekoNetwork): A modern , easy-to-use C++20 networking library via libcurl.
+- [NekoLog](https://github.com/hoshimoe/NekoLog): An easy-to-use, modern, lightweight, and efficient C++20 logging library.
+- [NekoEvent](https://github.com/hoshimoe/NekoEvent): A modern easy to use type-safe and high-performance event handling system for C++.
+- [NekoSchema](https://github.com/hoshimoe/NekoSchema): A lightweight, header-only C++20 schema library.
+- [NekoSystem](https://github.com/hoshimoe/NekoSystem): A modern C++20 cross-platform system utility library.
+- [NekoFunction](https://github.com/hoshimoe/NekoFunction): A comprehensive modern C++ utility library that provides practical functions for common programming tasks.
+- [NekoThreadPool](https://github.com/hoshimoe/NekoThreadPool): An easy to use and efficient C++ 20 thread pool that supports priorities and submission to specific threads.

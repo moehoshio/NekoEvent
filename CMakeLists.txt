@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(NekoEvent VERSION 1.0.1 LANGUAGES CXX)
+project(NekoEvent VERSION 1.0.2 LANGUAGES CXX)
 
 # ================
 # === Config ====
@@ -38,7 +38,7 @@ if(NEKO_EVENT_AUTO_FETCH_DEPS)
 
         FetchContent_Declare(
             NekoSchema
-            GIT_REPOSITORY https://github.com/moehoshio/NekoSchema.git
+            GIT_REPOSITORY https://github.com/hoshimoe/NekoSchema.git
             GIT_TAG        main
         )
         set(NEKO_SCHEMA_BUILD_TESTS OFF CACHE BOOL "" FORCE)
