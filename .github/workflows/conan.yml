@@ -7,6 +7,7 @@ on:
     branches: [ main, develop ]
   workflow_dispatch:
 
+
 jobs:
   test-conan-installation:
     name: Test Conan Installation (${{ matrix.os }})
@@ -15,17 +16,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Linux
-          - os: ubuntu-latest
-            python: "3.11"
-          
-          # Windows
-          - os: windows-latest
-            python: "3.11"
-          
-          # macOS
-          - os: macos-latest
-            python: "3.11"
+        # Linux
+        - os: ubuntu-latest
+          python: "3.11"
+
+        # Windows
+        - os: windows-latest
+          python: "3.11"
+
+        # macOS
+        - os: macos-latest
+          python: "3.11"
 
     steps:
     - name: Checkout repository
@@ -56,10 +57,10 @@ jobs:
       run: |
         # Copy the conan recipe to a working directory
         cp -r packages/Conan/neko-event/all/* .
-        
+
         # Remove the conandata.yml since we're using local source
         rm -f conandata.yml
-        
+
         # Update conanfile.py to use local source instead of downloading
         # Use a temp file approach that works on both GNU and BSD sed
         sed 's/exports_sources = .*/exports_sources = "CMakeLists.txt", "include\/*", "cmake\/*", "LICENSE", "README.md"/' conanfile.py > conanfile.py.tmp
@@ -70,10 +71,10 @@ jobs:
       run: |
         # Copy the conan recipe to a working directory
         Copy-Item -Recurse -Path "packages\Conan\neko-event\all\*" -Destination "."
-        
+
         # Remove the conandata.yml since we're using local source
         if (Test-Path "conandata.yml") { Remove-Item "conandata.yml" }
-        
+
         # Update conanfile.py to use local source instead of downloading
         $conanfile = Get-Content "conanfile.py" -Raw
         $conanfile = $conanfile -replace 'exports_sources = .*', 'exports_sources = "CMakeLists.txt", "include/*", "cmake/*", "LICENSE", "README.md"'
@@ -81,7 +82,7 @@ jobs:
 
     - name: Create Conan package from local source
       run: |
-        conan create . --version 1.0.1 --build=missing
+        conan create . --version 1.0.2 --build=missing
 
     - name: Verify Conan package installation
       run: |
@@ -119,14 +120,14 @@ jobs:
       if: runner.os != 'Windows'
       run: |
         echo "=== Verifying Conan package structure ==="
-        
+
         # Get package reference
         PKG_REF=$(conan list "neko-event/*:*" --format=compact | grep "neko-event/" | head -1)
         echo "Package reference: $PKG_REF"
-        
+
         # Show package info
         conan list "neko-event/*"
-        
+
         echo ""
         echo "=== Conan package verification complete ==="
 
@@ -134,9 +135,9 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         Write-Host "=== Verifying Conan package structure ==="
-        
+
         # Show package info
         conan list "neko-event/*"
-        
+
         Write-Host ""
         Write-Host "=== Conan package verification complete ==="

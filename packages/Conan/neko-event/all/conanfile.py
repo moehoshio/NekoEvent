@@ -4,15 +4,12 @@ from conan.tools.files import copy, get, rmdir
 from conan.tools.build import check_min_cppstd
 import os
 
-
-required_conan_version = ">=2.1"
-
-
 class NekoEventConan(ConanFile):
     name = "neko-event"
     license = "MIT OR Apache-2.0"
+    version = "1.0.2"
     homepage = "https://github.com/hoshimoe/NekoEvent"
-    url = "https://github.com/conan-io/conan-center-index"
+    url = "https://github.com/hoshimoe/NekoEvent"
     description = "A modern easy to use type-safe and high-performance event handling system for C++"
     topics = ("c++20", "event", "neko","event-dispatcher", "event-bus", "event-system", "pub-sub", "observer-pattern")
     settings = "os", "compiler", "build_type", "arch"
@@ -67,3 +64,4 @@ class NekoEventConan(ConanFile):
 
     def package_id(self):
         self.info.clear()
+
